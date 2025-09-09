@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     async submitRecord() {
-      const res = await fetch("https://api-worker.<ton-compte>.workers.dev/submitPending", {
+      const res = await fetch("https://api-worker.eliasveya.workers.dev/submitPending", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
