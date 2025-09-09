@@ -36,11 +36,11 @@ export default {
       await this.fetchPending();
     },
     async fetchPending() {
-      const res = await fetch("/pending");
+      const res = await fetch("https://api-worker.<ton-compte>.workers.dev/pending");
       this.pending = await res.json();
     },
     async approve(index, level) {
-      const res = await fetch("/approveRecord", {
+      const res = await fetch("https://api-worker.<ton-compte>.workers.dev/approveRecord", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
