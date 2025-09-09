@@ -1,7 +1,7 @@
 [
     {
-        "role": "EviV2",
-        "name": "List Owner",
+        "role": "owner",
+        "name": "EviV2",
         "link": "https://www.youtube.com/@EviV2"
     }
 ]
