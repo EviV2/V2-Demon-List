@@ -1,49 +1,52 @@
 export default {
-    template: `
-        <div class="submit-record-page">
-            <h2>Submit Your Record</h2>
-            <form id="submitForm">
-                <input id="username" placeholder="Your Name" required />
-                <select id="levelSelect"></select>
-                <input id="score" type="number" placeholder="Score %" required />
-                <input id="hz" type="number" placeholder="Hz" required />
-                <input id="videoLink" placeholder="YouTube link" required />
-                <button type="submit">Submit</button>
-            </form>
-            <p id="message"></p>
-        </div>
-    `,
-    mounted() {
-        fetch("/data/_list.json")
-            .then(res => res.json())
-            .then(data => {
-                const select = document.getElementById("levelSelect");
-                data.forEach(lvl => {
-                    const opt = document.createElement("option");
-                    opt.value = lvl;
-                    opt.innerText = lvl;
-                    select.appendChild(opt);
-                });
-            });
+  template: `
+    <div class="submit-page">
+      <h1>Submit a Record</h1>
+      <form @submit.prevent="submitRecord">
+        <label>Username</label>
+        <input v-model="username" required />
 
-        document.getElementById("submitForm").addEventListener("submit", e => {
-            e.preventDefault();
+        <label>Level Name</label>
+        <input v-model="level" required />
 
-            const record = {
-                username: document.getElementById("username").value,
-                level: document.getElementById("levelSelect").value,
-                score: Number(document.getElementById("score").value),
-                hz: Number(document.getElementById("hz").value),
-                videoLink: document.getElementById("videoLink").value,
-                date: new Date().toLocaleString()
-            };
+        <label>Percent</label>
+        <input type="number" v-model="score" required min="1" max="100" />
 
-            let pending = JSON.parse(localStorage.getItem("pendingRecords") || "[]");
-            pending.push(record);
-            localStorage.setItem("pendingRecords", JSON.stringify(pending));
+        <label>Refresh Rate (Hz)</label>
+        <input type="number" v-model="hz" required min="30" />
 
-            document.getElementById("message").innerText = "Record submitted! Waiting for admin validation.";
-            e.target.reset();
-        });
+        <label>Video Link</label>
+        <input v-model="videoLink" required />
+
+        <button type="submit">Submit</button>
+      </form>
+      <p v-if="message">{{ message }}</p>
+    </div>
+  `,
+  data() {
+    return {
+      username: "",
+      level: "",
+      score: 100,
+      hz: 60,
+      videoLink: "",
+      message: ""
+    };
+  },
+  methods: {
+    async submitRecord() {
+      const res = await fetch("/submitPending", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: this.username,
+          level: this.level,
+          score: this.score,
+          hz: this.hz,
+          videoLink: this.videoLink
+        })
+      });
+      this.message = await res.text();
     }
+  }
 };
