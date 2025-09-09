@@ -5,14 +5,15 @@ export default {
             <form id="submitForm">
                 <input id="username" placeholder="Your Name" required />
                 <select id="levelSelect"></select>
-                <input id="score" type="number" placeholder="Score" required />
+                <input id="score" type="number" placeholder="Score %" required />
+                <input id="hz" type="number" placeholder="Hz" required />
+                <input id="videoLink" placeholder="YouTube link" required />
                 <button type="submit">Submit</button>
             </form>
             <p id="message"></p>
         </div>
     `,
     mounted() {
-        // Charger les niveaux depuis _list.json
         fetch("/data/_list.json")
             .then(res => res.json())
             .then(data => {
@@ -25,16 +26,20 @@ export default {
                 });
             });
 
-        // Gestion du submit
         document.getElementById("submitForm").addEventListener("submit", e => {
             e.preventDefault();
-            const username = document.getElementById("username").value;
-            const level = document.getElementById("levelSelect").value;
-            const score = document.getElementById("score").value;
 
-            // Stocker le record en pending
-            const pending = JSON.parse(localStorage.getItem("pendingRecords") || "[]");
-            pending.push({ username, level, score, date: new Date().toLocaleString() });
+            const record = {
+                username: document.getElementById("username").value,
+                level: document.getElementById("levelSelect").value,
+                score: Number(document.getElementById("score").value),
+                hz: Number(document.getElementById("hz").value),
+                videoLink: document.getElementById("videoLink").value,
+                date: new Date().toLocaleString()
+            };
+
+            let pending = JSON.parse(localStorage.getItem("pendingRecords") || "[]");
+            pending.push(record);
             localStorage.setItem("pendingRecords", JSON.stringify(pending));
 
             document.getElementById("message").innerText = "Record submitted! Waiting for admin validation.";
